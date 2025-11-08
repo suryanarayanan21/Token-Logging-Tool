@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type TagProps = {
   text: string;
@@ -8,6 +8,14 @@ type TagProps = {
 type SearchInputProps = {
   tagList: string[];
   onCreateTag: (tag: string) => void;
+};
+
+type SuggestionItemProps = {
+  isSelected: boolean;
+  onHovered: () => void;
+  onClicked: (tag: string) => void;
+  value: string;
+  isSpecialItem?: boolean;
 };
 
 function Tag({ text, onClose }: TagProps) {
@@ -23,10 +31,56 @@ function Tag({ text, onClose }: TagProps) {
   );
 }
 
-function SearchInput({ tagList, onCreateTag }: SearchInputProps) {
+function SuggestionItem({
+  isSelected,
+  onHovered,
+  onClicked,
+  value,
+  isSpecialItem,
+}: SuggestionItemProps) {
+  return (
+    <div
+      className={`flex flex-row gap-2 items-center p-1 rounded-sm cursor-pointer ${
+        isSelected ? "bg-gray-200" : "bg-white"
+      }`}
+      onMouseEnter={onHovered}
+      onMouseMove={onHovered}
+      onMouseDown={(e) => {
+        e.preventDefault();
+        onClicked(value);
+      }}
+    >
+      {isSpecialItem && <span className="text-nowrap">Create token </span>}
+      <Tag text={value} />
+      {isSelected && (
+        <span className="text-nowrap text-sm text-gray-700">Hit ⏎</span>
+      )}
+    </div>
+  );
+}
+
+function SearchInput({ tagList: fullTagList, onCreateTag }: SearchInputProps) {
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
   const [value, setValue] = useState<string>("");
+  const [tagList, setTaglist] = useState<string[]>([]);
   const [selSuggestion, setSelSuggestion] = useState<number | undefined>();
+
+  useEffect(() => {
+    setTaglist(() => {
+      if (value !== "")
+        return fullTagList
+          .filter((tag) => tag.toLowerCase().includes(value.toLowerCase()))
+          .slice(0, 5);
+      else return fullTagList.slice(0, 5);
+    });
+  }, [value]);
+
+  const createTag = (tag: string) => {
+    onCreateTag(tag);
+    setSelSuggestion(undefined);
+    setShowSuggestions(false);
+    setValue("");
+  };
 
   return (
     <div className="relative">
@@ -44,11 +98,9 @@ function SearchInput({ tagList, onCreateTag }: SearchInputProps) {
         }}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
-            setShowSuggestions(false);
             if (selSuggestion === undefined || selSuggestion === tagList.length)
-              onCreateTag(value);
-            else onCreateTag(tagList[selSuggestion]);
-            setValue("");
+              createTag(value);
+            else createTag(tagList[selSuggestion]);
           }
 
           if (e.key === "ArrowDown") {
@@ -71,48 +123,32 @@ function SearchInput({ tagList, onCreateTag }: SearchInputProps) {
       />
       {showSuggestions && (
         <div className="absolute top-10 left-2 flex flex-col bg-white border rounded-sm border-gray-700 min-w-50 p-2 gap-0.5">
-          {tagList.map((tag, index) => (
-            <div
-              className={`flex flex-row gap-2 items-center p-1 rounded-sm cursor-pointer ${
-                index === selSuggestion ? "bg-gray-200" : "bg-white"
-              }`}
-              onMouseEnter={() => setSelSuggestion(index)}
-              onMouseMove={() => setSelSuggestion(index)}
-              onMouseDown={(e) => {
-                e.preventDefault();
-                onCreateTag(tagList[index]);
-                setSelSuggestion(undefined);
-                setShowSuggestions(false);
-                setValue("");
-              }}
-            >
-              <Tag text={tag} />
-              {selSuggestion === index && (
-                <span className="text-nowrap text-sm text-gray-700">Hit ⏎</span>
-              )}
-            </div>
-          ))}
-          <div
-            className={`flex flex-row gap-2 items-center mt-2 p-1 pl-1.5 rounded-sm cursor-pointer ${
-              tagList.length === selSuggestion ? "bg-gray-200" : "bg-white"
-            }`}
-            onMouseEnter={() => setSelSuggestion(tagList.length)}
-            onMouseMove={() => setSelSuggestion(tagList.length)}
-            onMouseDown={(e) => {
-                e.preventDefault();
-                onCreateTag(value);
-                setSelSuggestion(undefined);
-                setShowSuggestions(false);
-                setValue("");
-              }}
-          >
-            <span className="text-nowrap">Create token</span>{" "}
-            <Tag text={value} />
-            {(selSuggestion === tagList.length ||
-              selSuggestion === undefined) && (
-              <span className="text-nowrap text-sm text-gray-700">Hit ⏎</span>
-            )}
+          <div className="flex flex-row items-center border-b pb-2 mb-2 border-b-gray-400">
+            <span className="text-sm text-gray-700 whitespace-pre">
+              Select existing token or create
+            </span>
           </div>
+          {tagList.map((tag, index) => (
+            <SuggestionItem
+              isSelected={index === selSuggestion}
+              onHovered={() => setSelSuggestion(index)}
+              onClicked={(v) => {
+                createTag(v);
+              }}
+              value={tag}
+            />
+          ))}
+          <SuggestionItem
+            isSelected={
+              tagList.length === selSuggestion || selSuggestion === undefined
+            }
+            onHovered={() => setSelSuggestion(tagList.length)}
+            onClicked={(v) => {
+              createTag(v);
+            }}
+            value={value}
+            isSpecialItem
+          />
         </div>
       )}
     </div>
