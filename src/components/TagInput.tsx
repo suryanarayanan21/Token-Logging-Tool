@@ -1,82 +1,108 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type TagProps = {
   text: string;
+  onClose?: () => void;
 };
 
-type TransformingInputProps = {
-  index: number;
-  setTags: React.Dispatch<React.SetStateAction<string[] | undefined>>;
-  isFocused: boolean;
-  setFocusIndex: React.Dispatch<React.SetStateAction<number>>;
-  tagLength: number;
+type SearchInputProps = {
+  tagList: string[];
+  onCreateTag: (tag: string) => void;
 };
 
-function Tag({ text }: TagProps) {
+function Tag({ text, onClose }: TagProps) {
   return (
-    <div className="flex flex-row justify-center items-center pr-2.5 pl-2.5 pt-1 pb-1 bg-amber-900 text-white text-sm rounded-sm">
+    <div className="flex flex-row justify-center items-center pr-2.5 pl-2.5 pt-1 pb-1 bg-blue-900 text-white text-sm rounded-sm gap-1.5 w-fit text-nowrap">
       {text}
+      {onClose && (
+        <div className="w-fit text-white cursor-pointer" onClick={onClose}>
+          🗙
+        </div>
+      )}
     </div>
   );
 }
 
-function TransformingInput({
-  index,
-  setTags,
-  isFocused,
-  setFocusIndex,
-  tagLength
-}: TransformingInputProps) {
+function SearchInput({ tagList, onCreateTag }: SearchInputProps) {
+  const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
   const [value, setValue] = useState<string>("");
+  const [selSuggestion, setSelSuggestion] = useState<number | undefined>();
 
   return (
-    <div className="flex flex-row items-center justify-center">
-      <span className="whitespace-pre">{value}</span>
+    <div className="relative">
       <input
-        className="border-0 outline-0 w-0.5 text-white caret-black"
-        type="text"
-        autoFocus={isFocused}
+        value={value}
+        onFocus={(e) => {
+          if (e.target.value !== "") setShowSuggestions(true);
+        }}
+        onBlur={() => setShowSuggestions(false)}
+        onChange={(e) => {
+          if (e.target.value !== "") setShowSuggestions(true);
+          else setShowSuggestions(false);
+          setValue(e.target.value);
+          setSelSuggestion(undefined);
+        }}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
-            // Add input to tags
-            setTags((tags) => {
-              const clone = tags ? [...tags] : undefined;
-              clone?.splice(index, 0, value);
-              return clone;
-            });
-
-            // Reset focus
-            setFocusIndex(index + 1);
+            setShowSuggestions(false);
+            if (selSuggestion === undefined || selSuggestion === tagList.length)
+              onCreateTag(value);
+            else onCreateTag(tagList[selSuggestion]);
+            setValue("");
           }
 
-          if (e.key === "Backspace") {
-            // Remove previous entry from tags
-            if (value === "") {
-              if (index > 0) {
-                setTags((tags) => {
-                  const clone = tags ? [...tags] : undefined;
-                  clone?.splice(index - 1, 1);
-                  return clone;
-                });
-
-                // Reset focus
-                setFocusIndex(index - 1);
-              }
-            }
+          if (e.key === "ArrowDown") {
+            setSelSuggestion((s) =>
+              s !== undefined ? (s + 1) % (tagList.length + 1) : 0
+            );
+            e.preventDefault();
           }
 
-          if(e.key === "ArrowLeft" && index > 0){
-            setFocusIndex(i => i-1);
-          }
-
-          if(e.key === "ArrowRight" && index < tagLength) {
-            setFocusIndex(i => i+1);
+          if (e.key === "ArrowUp") {
+            setSelSuggestion((s) =>
+              s !== undefined ? (s - 1 < 0 ? tagList.length : s - 1) : 0
+            );
+            e.preventDefault();
           }
         }}
-        onChange={(e) => {
-          setValue(e.target.value);
-        }}
+        className="outline-0"
+        type="text"
+        placeholder="Add tokens"
       />
+      {showSuggestions && (
+        <div className="absolute top-10 left-2 flex flex-col bg-white border rounded-sm border-gray-700 min-w-50 p-2 gap-0.5">
+          {tagList.map((tag, index) => (
+            <div
+              className={`flex flex-row gap-2 items-center p-1 rounded-sm cursor-pointer ${
+                index === selSuggestion ? "bg-gray-200" : "bg-white"
+              }`}
+              onMouseEnter={() => setSelSuggestion(index)}
+              onMouseMove={() => setSelSuggestion(index)}
+              onClick={(e) => {e.preventDefault(); onCreateTag(tagList[index]); setValue("")}}
+            >
+              <Tag text={tag} />
+              {selSuggestion === index && (
+                <span className="text-nowrap text-sm text-gray-700">Hit ⏎</span>
+              )}
+            </div>
+          ))}
+          <div
+            className={`flex flex-row gap-2 items-center mt-2 p-1 pl-1.5 rounded-sm cursor-pointer ${
+              tagList.length === selSuggestion ? "bg-gray-200" : "bg-white"
+            }`}
+            onMouseEnter={() => setSelSuggestion(tagList.length)}
+            onMouseMove={() => setSelSuggestion(tagList.length)}
+            onClick={() => onCreateTag(value)}
+          >
+            <span className="text-nowrap">Create token</span>{" "}
+            <Tag text={value} />
+            {(selSuggestion === tagList.length ||
+              selSuggestion === undefined) && (
+              <span className="text-nowrap text-sm text-gray-700">Hit ⏎</span>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -87,30 +113,22 @@ function TagInput() {
     "Birthday",
   ]);
 
-  const [focusIndex, setFocusIndex] = useState<number>(tags?.length ?? 0);
+  const deleteTag = (index: number) => {
+    const clone = tags ? [...tags] : undefined;
+    clone?.splice(index, 1);
+    setTags(clone);
+  };
 
   return (
-    <div className="flex flex-row pl-3 pr-3 pt-2 pb-2 gap-1">
+    <div className="flex flex-row items-center pl-3 pr-3 pt-2 pb-2 gap-2">
       {tags?.map((tag, index) => (
-        <>
-          <TransformingInput
-            key={Math.random()}
-            index={index}
-            setTags={setTags}
-            isFocused={index == focusIndex}
-            setFocusIndex={setFocusIndex}
-            tagLength={tags.length}
-          />
-          <Tag text={tag} />
-        </>
+        <Tag text={tag} onClose={() => deleteTag(index)} />
       ))}
-      <TransformingInput
-        key={Math.random()}
-        index={tags?.length ?? 0}
-        setTags={setTags}
-        isFocused={(tags?.length ?? 0) == focusIndex}
-        setFocusIndex={setFocusIndex}
-        tagLength={tags?.length ?? 0}
+      <SearchInput
+        tagList={["Banana", "Apple", "Pie"]}
+        onCreateTag={(tag) => {
+          setTags([...(tags ?? []), tag]);
+        }}
       />
     </div>
   );
