@@ -78,7 +78,13 @@ function SearchInput({ tagList, onCreateTag }: SearchInputProps) {
               }`}
               onMouseEnter={() => setSelSuggestion(index)}
               onMouseMove={() => setSelSuggestion(index)}
-              onClick={(e) => {e.preventDefault(); onCreateTag(tagList[index]); setValue("")}}
+              onMouseDown={(e) => {
+                e.preventDefault();
+                onCreateTag(tagList[index]);
+                setSelSuggestion(undefined);
+                setShowSuggestions(false);
+                setValue("");
+              }}
             >
               <Tag text={tag} />
               {selSuggestion === index && (
@@ -92,7 +98,13 @@ function SearchInput({ tagList, onCreateTag }: SearchInputProps) {
             }`}
             onMouseEnter={() => setSelSuggestion(tagList.length)}
             onMouseMove={() => setSelSuggestion(tagList.length)}
-            onClick={() => onCreateTag(value)}
+            onMouseDown={(e) => {
+                e.preventDefault();
+                onCreateTag(value);
+                setSelSuggestion(undefined);
+                setShowSuggestions(false);
+                setValue("");
+              }}
           >
             <span className="text-nowrap">Create token</span>{" "}
             <Tag text={value} />
