@@ -4,6 +4,7 @@ import { FaPlus } from "react-icons/fa6";
 import { IoCloseOutline } from "react-icons/io5";
 
 type TokenEntry = {
+  id: string;
   name?: string;
   associatedTokens: string[];
 };
@@ -22,12 +23,10 @@ const FormRow = () => {
 };
 
 export const TagEntryForm = () => {
+  const [tokenIdSeed, setTokenIdSeed] = useState<number>(1);
   const [tokens, setTokens] = useState<TokenEntry[]>([
     {
-      name: "Artificial Intelligence",
-      associatedTokens: ["Design", "Research", "Ethics"],
-    },
-    {
+      id: "0",
       name: "",
       associatedTokens: [],
     },
@@ -39,7 +38,7 @@ export const TagEntryForm = () => {
         <table className="w-full">
           {tokens.map((token, index) => (
             <tr
-              key={`row-${index}`}
+              key={`${token.id}`}
               className={
                 index < tokens.length - 1 ? `border-b border-b-gray-400` : ""
               }
@@ -84,13 +83,14 @@ export const TagEntryForm = () => {
       </div>
       <button
         className="mt-5 cursor-pointer"
-        onClick={() =>
+        onClick={() => {
           setTokens((t) => {
             const clone = [...t];
-            clone.push({ associatedTokens: [] });
+            clone.push({ id: `${tokenIdSeed}`, associatedTokens: [] });
             return clone;
-          })
-        }
+          });
+          setTokenIdSeed(tokenIdSeed + 1);
+        }}
       >
         <div className="flex flex-row gap-1.5 items-center text-gray-500 hover:text-gray-800">
           <FaPlus />
