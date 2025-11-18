@@ -119,7 +119,7 @@ function SearchInput({ tagList: fullTagList, onCreateTag }: SearchInputProps) {
         }}
         className="outline-0"
         type="text"
-        placeholder="Add tokens"
+        placeholder="Add associated tokens"
       />
       {showSuggestions && (
         <div className="absolute top-10 left-2 flex flex-col bg-white border rounded-sm border-gray-700 min-w-50 p-2 gap-0.5">

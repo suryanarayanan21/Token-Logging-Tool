@@ -1,7 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router";
 
 export const Login = () => {
   const [name, setName] = useState<string>("");
+  const navigate = useNavigate();
 
   return (
     <div className="w-dvw h-dvh flex flex-row items-center justify-center">
@@ -15,7 +17,12 @@ export const Login = () => {
           onChange={(e) => setName(e.target.value)}
         />
         <div>
-          <button className="rounded-sm bg-black text-white pt-2 pb-2 pl-4 pr-4">Submit</button>
+          <button
+            className="rounded-sm bg-black text-white pt-2 pb-2 pl-4 pr-4 cursor-pointer"
+            onClick={() => navigate(`/form/${name}`)}
+          >
+            Submit
+          </button>
         </div>
       </div>
     </div>
