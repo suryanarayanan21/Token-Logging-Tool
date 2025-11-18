@@ -9,19 +9,6 @@ type TokenEntry = {
   associatedTokens: string[];
 };
 
-const FormRow = () => {
-  return (
-    <div className="w-full flex flex-row items-center">
-      <input
-        className="w-28 outline-0 border-r border-r-gray-500"
-        type="text"
-        placeholder="Token Name"
-      />
-      <TagInput />
-    </div>
-  );
-};
-
 export const TagEntryForm = () => {
   const [tokenIdSeed, setTokenIdSeed] = useState<number>(1);
   const [tokens, setTokens] = useState<TokenEntry[]>([
