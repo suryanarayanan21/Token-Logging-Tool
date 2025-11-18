@@ -47,7 +47,7 @@ export const TagEntryForm = () => {
                   />
                   <button
                     className="h-full cursor-pointer text-gray-500 hover:text-gray-800"
-                    onClick={(e) => {
+                    onClick={() => {
                       setTokens((t) => {
                         const clone = [...t];
                         clone.splice(index, 1);
