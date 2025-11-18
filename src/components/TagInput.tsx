@@ -156,10 +156,7 @@ function SearchInput({ tagList: fullTagList, onCreateTag }: SearchInputProps) {
 }
 
 function TagInput() {
-  const [tags, setTags] = useState<string[] | undefined>([
-    "Animal",
-    "Birthday",
-  ]);
+  const [tags, setTags] = useState<string[] | undefined>([]);
 
   const deleteTag = (index: number) => {
     const clone = tags ? [...tags] : undefined;
