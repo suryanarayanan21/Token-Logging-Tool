@@ -165,7 +165,7 @@ function TagInput() {
   };
 
   return (
-    <div className="flex flex-row items-center pl-3 pr-3 pt-2 pb-2 gap-2">
+    <div className="flex flex-row flex-wrap items-center pl-3 pr-3 pt-2 pb-2 gap-2">
       {tags?.map((tag, index) => (
         <Tag text={tag} onClose={() => deleteTag(index)} />
       ))}

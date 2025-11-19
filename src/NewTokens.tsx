@@ -1,3 +1,4 @@
+import { AttachmentInput } from "./components/AttachmentInput";
 import { TagEntryForm } from "./components/TagEntryForm";
 import { useLoaderData } from "react-router";
 
@@ -11,6 +12,7 @@ export const NewTokens = () => {
           Hi {data.author}, please enter your tokens.
         </p>
         <TagEntryForm />
+        <AttachmentInput />
         <div>
           <button className="rounded-sm bg-black text-white pt-2 pb-2 pl-4 pr-4 cursor-pointer">
             Submit
