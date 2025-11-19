@@ -30,7 +30,7 @@ export const TagEntryForm = () => {
                 index < tokens.length - 1 ? `border-b border-b-gray-400` : ""
               }
             >
-              <td className="border-r border-r-gray-400 pb-2 pt-2 w-56">
+              <td className="border-r border-r-gray-400 pb-2 pt-2 w-56 min-w-32">
                 <div className="flex flex-row items-center pl-2 pr-2">
                   <input
                     className="w-full outline-0"

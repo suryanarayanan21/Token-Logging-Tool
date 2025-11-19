@@ -2,12 +2,15 @@ import { useRef, useState } from "react";
 import { FaPlus } from "react-icons/fa6";
 import { FaFile } from "react-icons/fa";
 import { FaRegFilePdf } from "react-icons/fa6";
+import { FaRegImage } from "react-icons/fa6";
 import { FiVideo } from "react-icons/fi";
 import { MdOutlineAudiotrack } from "react-icons/md";
+import { IoCloseOutline } from "react-icons/io5";
 
 type AttachmentDisplayProps = {
   filename: string;
   mimetype: string;
+  onDelete: () => void;
 };
 
 type FileIconProps = {
@@ -18,16 +21,18 @@ const FileIcon = ({ mimetype }: FileIconProps) => {
   if (mimetype === "application/pdf") return <FaRegFilePdf />;
   if (mimetype.startsWith("video")) return <FiVideo />;
   if (mimetype.startsWith("audio")) return <MdOutlineAudiotrack />;
+  if (mimetype.startsWith("image")) return <FaRegImage />
   else return <FaFile />;
 };
 
-const AttachmentDisplay = ({ filename, mimetype }: AttachmentDisplayProps) => {
+const AttachmentDisplay = ({ filename, mimetype, onDelete }: AttachmentDisplayProps) => {
   return (
     <div className="flex flex-row items-center gap-1.5 bg-gray-300 rounded-md pl-4 pr-4 pt-2 pb-2">
       <FileIcon mimetype={mimetype} />
       <span className="max-w-32 text-ellipsis overflow-clip whitespace-nowrap">
         {filename}
       </span>
+      <button className="cursor-pointer" onClick={onDelete}><IoCloseOutline /></button>
     </div>
   );
 };
@@ -52,10 +57,16 @@ export const AttachmentInput = () => {
         className="hidden"
       />
 
-      {attachments.map((attachment) => (
+      {attachments.map((attachment, index) => (
         <AttachmentDisplay
+          key={attachment.name}
           filename={attachment.name}
           mimetype={attachment.type}
+          onDelete={() => {
+            const clone = [...attachments];
+            clone.splice(index, 1);
+            setAttachments(clone);
+          }}
         />
       ))}
 

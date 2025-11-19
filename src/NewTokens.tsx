@@ -7,8 +7,8 @@ export const NewTokens = () => {
 
   return (
     <div className="p-10 w-dvw h-dvh">
-      <div className="flex flex-col w-full justify-center items-baseline gap-10">
-        <p className="text-2xl text-gray-800">
+      <div className="flex flex-col w-full justify-center items-baseline gap-4">
+        <p className="text-2xl mb-4 text-gray-800">
           Hi {data.author}, please enter your tokens.
         </p>
         <TagEntryForm />
