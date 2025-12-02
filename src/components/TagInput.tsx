@@ -1,5 +1,10 @@
 import { useEffect, useState } from "react";
 
+type TagInputProps = {
+  tagList: string[];
+  onChange: (tags: string[]) => void;
+}
+
 type TagProps = {
   text: string;
   onClose?: () => void;
@@ -155,7 +160,7 @@ function SearchInput({ tagList: fullTagList, onCreateTag }: SearchInputProps) {
   );
 }
 
-function TagInput() {
+function TagInput({ tagList, onChange }:TagInputProps) {
   const [tags, setTags] = useState<string[] | undefined>([]);
 
   const deleteTag = (index: number) => {
@@ -170,9 +175,11 @@ function TagInput() {
         <Tag text={tag} onClose={() => deleteTag(index)} />
       ))}
       <SearchInput
-        tagList={["Banana", "Apple", "Pie"]}
+        tagList={tagList}
         onCreateTag={(tag) => {
-          setTags([...(tags ?? []), tag]);
+          let clone = [...(tags ?? []), tag]
+          onChange(clone);
+          setTags(clone);
         }}
       />
     </div>

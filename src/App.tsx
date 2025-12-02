@@ -1,11 +1,5 @@
-import TagInput from "./components/TagInput";
-
 function App() {
-  return (
-    <>
-      <TagInput />
-    </>
-  );
+  return <></>;
 }
 
 export default App;
