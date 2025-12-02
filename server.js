@@ -21,6 +21,26 @@ app.get("/api/tokens", (req, res) => {
       attachments: [""],
       deleted: false,
     },
+    {
+      id: crypto.randomUUID(),
+      author: "Surya",
+      course: "Computer Science",
+      name: "Algorithms",
+      associatedTokens: ["Data structures", "Analysis", "Formal proof"],
+      version: 1,
+      attachments: [""],
+      deleted: false,
+    },
+    {
+      id: crypto.randomUUID(),
+      author: "Surya",
+      course: "Computer Science",
+      name: "Algorithms",
+      associatedTokens: ["Data structures", "Analysis", "Formal proof"],
+      version: 1,
+      attachments: [""],
+      deleted: false,
+    },
   ]);
 });
 

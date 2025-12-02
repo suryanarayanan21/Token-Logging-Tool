@@ -16,9 +16,7 @@ export const tokenApi = createApi({
       providesTags: ["TokenList"],
       transformResponse: (response: Token[]) => {
         return [
-          ...new Set(
-            response.map((token) => token.associatedTokens).flat()
-          ),
+          ...new Set(response.map((token) => token.associatedTokens).flat()),
         ];
       },
     }),
@@ -32,10 +30,22 @@ export const tokenApi = createApi({
           body: {
             ...token,
             id,
-            version: 1
+            version: 1,
           },
         };
       },
+      invalidatesTags: ["TokenList"],
+    }),
+
+    updateToken: build.mutation<Token, Token>({
+      query: (token) => ({
+        url: "tokens",
+        method: "PATCH",
+        body: {
+          ...token,
+          version: token.version + 1,
+        },
+      }),
       invalidatesTags: ["TokenList"],
     }),
 
@@ -54,4 +64,5 @@ export const {
   useGetAllAssociatedTokensQuery,
   useAddTokenMutation,
   useDeleteTokenMutation,
+  useUpdateTokenMutation,
 } = tokenApi;

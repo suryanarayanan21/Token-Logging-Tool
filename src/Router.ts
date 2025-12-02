@@ -2,6 +2,7 @@ import { createBrowserRouter } from "react-router";
 // import App from "./App";
 import { Login } from "./Login";
 import { NewTokens } from "./NewTokens";
+import { EditTokens } from "./EditTokens";
 
 export default createBrowserRouter([
   {
@@ -16,6 +17,13 @@ export default createBrowserRouter([
         },
         Component: NewTokens,
       },
+      {
+        path: "edit/:author",
+        loader: async ({params}) => {
+          return {author: params.author}
+        },
+        Component: EditTokens,
+      }
     ],
   },
 ]);

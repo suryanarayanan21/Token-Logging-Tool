@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 type TagInputProps = {
   tagList: string[];
+  initialList?: string[];
   onChange: (tags: string[]) => void;
 }
 
@@ -160,8 +161,8 @@ function SearchInput({ tagList: fullTagList, onCreateTag }: SearchInputProps) {
   );
 }
 
-function TagInput({ tagList, onChange }:TagInputProps) {
-  const [tags, setTags] = useState<string[] | undefined>([]);
+function TagInput({ initialList, tagList, onChange }:TagInputProps) {
+  const [tags, setTags] = useState<string[] | undefined>(initialList);
 
   const deleteTag = (index: number) => {
     const clone = tags ? [...tags] : undefined;
