@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { Token } from "../../types/Token";
 import { MdOutlineDeleteOutline } from "react-icons/md";
 import { FaCheck } from "react-icons/fa6";
@@ -12,9 +12,10 @@ import { AttachmentInput } from "./AttachmentInput";
 
 type TagEditFormProps = {
   token: Token;
+  refresh: () => void;
 };
 
-export const TagEditForm = ({ token }: TagEditFormProps) => {
+export const TagEditForm = ({ token, refresh }: TagEditFormProps) => {
   const [name, setName] = useState(token.name);
   const [course, setCourse] = useState(token.course);
   const [attachments] = useState(token.attachments);
@@ -25,9 +26,9 @@ export const TagEditForm = ({ token }: TagEditFormProps) => {
   const [updateToken] = useUpdateTokenMutation();
   const [deleteToken] = useDeleteTokenMutation();
 
-  useEffect(() => {
-    setIsModified(false);
-  }, [token.version]);
+  // useEffect(() => {
+  //   setIsModified(false);
+  // }, [token.version]);
 
   return (
     <div className="rounded-xl border border-gray-400 w-full p-4">
@@ -67,6 +68,7 @@ export const TagEditForm = ({ token }: TagEditFormProps) => {
                 initialList={token.associatedTokens}
                 tagList={tagList ?? []}
                 onChange={(tags) => {
+                  setIsModified(true);
                   setTags(tags);
                 }}
               />
@@ -76,8 +78,9 @@ export const TagEditForm = ({ token }: TagEditFormProps) => {
             <div className="flex flex-row items-center pl-2 pr-2 gap-1">
               <button
                 className="h-full cursor-pointer text-gray-500 hover:text-gray-800"
-                onClick={() => {
-                  deleteToken(token.id);
+                onClick={async () => {
+                  await deleteToken(token.id);
+                  refresh();
                 }}
               >
                 <MdOutlineDeleteOutline />
@@ -85,14 +88,16 @@ export const TagEditForm = ({ token }: TagEditFormProps) => {
               <button
                 className="h-full cursor-pointer text-gray-500 hover:text-gray-800"
                 disabled={!isModified}
-                onClick={() => {
-                  updateToken({
+                onClick={async () => {
+                  alert("Editing Token");
+                  await updateToken({
                     ...token,
                     name,
                     course,
                     associatedTokens: tags,
                     attachments,
                   });
+                  refresh();
                 }}
               >
                 <FaCheck />

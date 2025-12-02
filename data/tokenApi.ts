@@ -21,7 +21,7 @@ export const tokenApi = createApi({
       },
     }),
 
-    addToken: build.mutation<Token, Omit<Token, "id" | "version">>({
+    addToken: build.mutation<void, Omit<Token, "id" | "version">>({
       query: (token) => {
         const id = crypto.randomUUID();
         return {
@@ -37,10 +37,10 @@ export const tokenApi = createApi({
       invalidatesTags: ["TokenList"],
     }),
 
-    updateToken: build.mutation<Token, Token>({
+    updateToken: build.mutation<void, Token>({
       query: (token) => ({
         url: "tokens",
-        method: "PATCH",
+        method: "PUT",
         body: {
           ...token,
           version: token.version + 1,
@@ -49,7 +49,7 @@ export const tokenApi = createApi({
       invalidatesTags: ["TokenList"],
     }),
 
-    deleteToken: build.mutation<Token, string>({
+    deleteToken: build.mutation<void, string>({
       query: (id) => ({
         url: `tokens/${id}`,
         method: "DELETE",

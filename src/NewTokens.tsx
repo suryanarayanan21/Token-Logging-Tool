@@ -33,14 +33,16 @@ export const NewTokens = () => {
         <div>
           <button
             className="rounded-sm bg-black text-white pt-2 pb-2 pl-4 pr-4 cursor-pointer"
-            onClick={() => {
-              tokens.forEach(({ id, ...token }) =>
-                addToken({
+            onClick={async () => {
+              const jobs = tokens.map(async ({ id, ...token }) =>
+                await addToken({
                   ...token,
                   attachments: [],
                   author: data.author,
                 })
               );
+
+              await Promise.all(jobs);
             }}
           >
             Submit

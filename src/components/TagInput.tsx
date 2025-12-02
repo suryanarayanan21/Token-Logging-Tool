@@ -168,6 +168,7 @@ function TagInput({ initialList, tagList, onChange }:TagInputProps) {
     const clone = tags ? [...tags] : undefined;
     clone?.splice(index, 1);
     setTags(clone);
+    onChange(clone ?? []);
   };
 
   return (
