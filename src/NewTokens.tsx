@@ -5,12 +5,18 @@ import { MdOutlineEdit } from "react-icons/md";
 import { useLoaderData } from "react-router";
 import { useAddTokenMutation } from "../data/tokenApi";
 import { useNavigate } from "react-router";
+import { ToastContainer, toast } from 'react-toastify';
 
 export const NewTokens = () => {
   const data = useLoaderData();
   const [tokens, setTokens] = useState<TokenEntry[]>([]);
-  const [addToken] = useAddTokenMutation();
+  const [formId, setFormId] = useState(0);
+  const [addToken, {isLoading}] = useAddTokenMutation();
   const navigate = useNavigate();
+
+  const refreshForm = () => {
+    setFormId(i => i + 1);
+  }
 
   return (
     <div className="p-10 w-dvw h-dvh">
@@ -25,6 +31,7 @@ export const NewTokens = () => {
           Hi {data.author}, please enter your tokens.
         </p>
         <TagEntryForm
+          key={formId}
           onChange={(tokens) => {
             setTokens(tokens);
           }}
@@ -32,7 +39,7 @@ export const NewTokens = () => {
         <AttachmentInput />
         <div>
           <button
-            className="rounded-sm bg-black text-white pt-2 pb-2 pl-4 pr-4 cursor-pointer"
+            className="rounded-sm bg-black text-white pt-2 pb-2 pl-4 pr-4 cursor-pointer disabled:opacity-30 disabled:cursor-default"
             onClick={async () => {
               const jobs = tokens.map(async ({ id, ...token }) =>
                 await addToken({
@@ -42,13 +49,22 @@ export const NewTokens = () => {
                 })
               );
 
-              await Promise.all(jobs);
+              await toast.promise(Promise.all(jobs), {
+                pending: " 🕧 Adding Tokens...",
+                success: " ✅ Added Tokens!"
+              }, {
+                position: "top-center"
+              });
+
+              refreshForm();
             }}
+            disabled={isLoading}
           >
             Submit
           </button>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };
