@@ -12,10 +12,9 @@ import { AttachmentInput } from "./AttachmentInput";
 
 type TagEditFormProps = {
   token: Token;
-  refresh: () => void;
 };
 
-export const TagEditForm = ({ token, refresh }: TagEditFormProps) => {
+export const TagEditForm = ({ token }: TagEditFormProps) => {
   const [name, setName] = useState(token.name);
   const [course, setCourse] = useState(token.course);
   const [attachments] = useState(token.attachments);
@@ -25,10 +24,6 @@ export const TagEditForm = ({ token, refresh }: TagEditFormProps) => {
   const { data: tagList } = useGetAllAssociatedTokensQuery();
   const [updateToken] = useUpdateTokenMutation();
   const [deleteToken] = useDeleteTokenMutation();
-
-  // useEffect(() => {
-  //   setIsModified(false);
-  // }, [token.version]);
 
   return (
     <div className="rounded-xl border border-gray-400 w-full p-4">
@@ -80,7 +75,6 @@ export const TagEditForm = ({ token, refresh }: TagEditFormProps) => {
                 className="h-full cursor-pointer text-gray-500 hover:text-gray-800"
                 onClick={async () => {
                   await deleteToken(token.id);
-                  refresh();
                 }}
               >
                 <MdOutlineDeleteOutline />
@@ -97,7 +91,6 @@ export const TagEditForm = ({ token, refresh }: TagEditFormProps) => {
                     associatedTokens: tags,
                     attachments,
                   });
-                  refresh();
                 }}
               >
                 <FaCheck />

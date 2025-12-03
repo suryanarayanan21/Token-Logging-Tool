@@ -37,7 +37,7 @@ export const tokenApi = createApi({
       invalidatesTags: ["TokenList"],
     }),
 
-    updateToken: build.mutation<void, Token>({
+    updateToken: build.mutation<number, Token>({
       query: (token) => ({
         url: "tokens",
         method: "PUT",
@@ -47,14 +47,16 @@ export const tokenApi = createApi({
         },
       }),
       invalidatesTags: ["TokenList"],
+      transformResponse: () => 1
     }),
 
-    deleteToken: build.mutation<void, string>({
+    deleteToken: build.mutation<number, string>({
       query: (id) => ({
         url: `tokens/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["TokenList"],
+      transformResponse: () => 1
     }),
   }),
 });

@@ -68,14 +68,14 @@ app.post("/api/tokens/", (req, res) => {
   // Add data to database
   console.log(`Adding new Token: ${req.body.name}`);
   mockData.push(req.body);
-  res.sendStatus(200);
+  res.json({});
 });
 
 app.put("/api/tokens", (req, res) => {
   // Add data to database
   console.log(`Updating token: ${req.body.name}`);
   mockData.push(req.body);
-  res.sendStatus(200);
+  res.json({});
 });
 
 app.delete("/api/tokens/:id", (req, res) => {
@@ -98,6 +98,8 @@ app.delete("/api/tokens/:id", (req, res) => {
 
   // Mark as deleted in database
   mockData[deleted].deleted = true;
+
+  res.json({})
 });
 
 app.listen(port, () => {
