@@ -1,6 +1,7 @@
 import { useLoaderData } from "react-router";
 import { useGetTokensQuery } from "../data/tokenApi";
 import { TagEditForm } from "./components/TagEditForm";
+import { ToastContainer, toast } from "react-toastify";
 
 export const EditTokens = () => {
   const pageData = useLoaderData();
@@ -13,8 +14,10 @@ export const EditTokens = () => {
       {data
         .filter((token) => token.author === pageData.author)
         .map((token) => (
-          <TagEditForm key={`${token.id}-${token.version}`} token={token} />
+          <TagEditForm toast={toast} key={`${token.id}-${token.version}`} token={token} />
         ))}
+
+      <ToastContainer />
     </div>
   );
 };

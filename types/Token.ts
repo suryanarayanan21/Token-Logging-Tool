@@ -1,3 +1,9 @@
+export type Attachment = {
+  name: string;
+  mimetype: string;
+  url: string;
+}
+
 export type Token = {
   id: string;
   author: string;
@@ -5,6 +11,6 @@ export type Token = {
   name: string;
   associatedTokens: string[];
   version: number;
-  attachments: string[];
+  attachments: Attachment[];
   deleted?: boolean;
 };

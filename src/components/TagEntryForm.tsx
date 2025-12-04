@@ -36,7 +36,7 @@ export const TagEntryForm = ({ onChange }: TagEntryFormProps) => {
     !isLoading && (
       <div className="rounded-xl border border-gray-400 w-full p-4">
         <div className="border-b pb-4 border-b-gray-400">
-          <table className="w-full">
+          <table className="w-full table-fixed">
             {tokens.map((token, index) => (
               <tr
                 key={`${token.id}`}
@@ -90,8 +90,8 @@ export const TagEntryForm = ({ onChange }: TagEntryFormProps) => {
                     />
                   </div>
                 </td>
-                <td className="pb-2 pt-2 grow">
-                  <div className="w-100 flex flex-row items-center justify-start">
+                <td className="pb-2 pt-2">
+                  <div className="w-full flex flex-row items-center justify-start">
                     <TagInput
                       tagList={[
                         ...new Set([

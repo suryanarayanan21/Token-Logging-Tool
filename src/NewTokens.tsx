@@ -6,12 +6,14 @@ import { useLoaderData } from "react-router";
 import { useAddTokenMutation } from "../data/tokenApi";
 import { useNavigate } from "react-router";
 import { ToastContainer, toast } from 'react-toastify';
+import type { Attachment } from "../types/Token";
 
 export const NewTokens = () => {
   const data = useLoaderData();
   const [tokens, setTokens] = useState<TokenEntry[]>([]);
   const [formId, setFormId] = useState(0);
   const [addToken, {isLoading}] = useAddTokenMutation();
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
   const navigate = useNavigate();
 
   const refreshForm = () => {
@@ -36,7 +38,9 @@ export const NewTokens = () => {
             setTokens(tokens);
           }}
         />
-        <AttachmentInput />
+        <AttachmentInput initialList={[]} onChange={(attachments) => {
+          setAttachments(attachments)
+        }}/>
         <div>
           <button
             className="rounded-sm bg-black text-white pt-2 pb-2 pl-4 pr-4 cursor-pointer disabled:opacity-30 disabled:cursor-default"
@@ -44,7 +48,7 @@ export const NewTokens = () => {
               const jobs = tokens.map(async ({ id, ...token }) =>
                 await addToken({
                   ...token,
-                  attachments: [],
+                  attachments: attachments,
                   author: data.author,
                 })
               );

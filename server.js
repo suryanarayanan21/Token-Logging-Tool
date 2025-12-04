@@ -1,5 +1,7 @@
 import express from "express";
+import multer from "multer";
 const app = express();
+const upload = multer({storage: multer.memoryStorage()});
 const port = 3000;
 
 app.use("/", express.static("dist"));
@@ -13,7 +15,7 @@ const mockData = [
     name: "Algorithms",
     associatedTokens: ["Data structures", "Analysis", "Formal proof"],
     version: 1,
-    attachments: [""],
+    attachments: [],
     deleted: false,
   },
   {
@@ -23,7 +25,7 @@ const mockData = [
     name: "Neural Networks",
     associatedTokens: ["Analysis", "Formal proof", "Coding"],
     version: 1,
-    attachments: [""],
+    attachments: [],
     deleted: false,
   },
   {
@@ -33,7 +35,7 @@ const mockData = [
     name: "Encryption",
     associatedTokens: ["Coding", "Networks", "Formal proof"],
     version: 1,
-    attachments: [""],
+    attachments: [],
     deleted: false,
   },
 ];
@@ -41,6 +43,12 @@ const mockData = [
 app.get("/api", (req, res) => {
   res.send("Hello World!");
 });
+
+app.post("/api/files", upload.single('file'), (req, res) => {
+  console.log(`Received uploaded file: ${req.file.filename}`)
+  delete req.file.buffer;
+  res.json({url: ""})
+})
 
 app.get("/api/tokens", (req, res) => {
   // Get data from database
