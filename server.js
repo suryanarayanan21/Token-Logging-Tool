@@ -2,7 +2,7 @@ import express from "express";
 import multer from "multer";
 const app = express();
 const upload = multer({storage: multer.memoryStorage()});
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.use("/", express.static("dist"));
 app.use(express.json());
