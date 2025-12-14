@@ -8,10 +8,13 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "serve": "node server.js",
-    "start": "node server.js"
+    "serve": "./setenv.sh && node server.js",
+    "start": "node server.js",
+    "setenv": "set -o allexport && source ./.env && set +o allexport"
   },
   "dependencies": {
+    "@azure/cosmos": "^4.9.0",
+    "@azure/identity": "^4.13.0",
     "@reduxjs/toolkit": "^2.10.1",
     "@tailwindcss/vite": "^4.1.17",
     "express": "^5.2.1",

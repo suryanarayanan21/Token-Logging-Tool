@@ -1,58 +1,53 @@
 import express from "express";
 import multer from "multer";
+import { CosmosClient } from "@azure/cosmos";
+
 const app = express();
-const upload = multer({storage: multer.memoryStorage()});
+const upload = multer({ storage: multer.memoryStorage() });
 const port = process.env.PORT || 3000;
+
+const client = new CosmosClient({
+  connectionString: process.env.COSMOS_CONNECTION_STRING,
+});
+
+const database = client.database("TokenDB");
+const container = database.container("Tokens");
+
+/// Services
+
+async function getTokens() {
+  const { resources } = await container.items.readAll().fetchAll();
+  return resources.map((r) => ({ ...r, id: r.dataId }));
+}
+
+async function writeTokens(tokens) {
+  const tasks = tokens.map(async (token) => {
+    token.dataId = token.id;
+    delete token.id;
+    await container.upsert(token);
+  });
+
+  await Promise.all(tasks);
+}
+
+///
 
 app.use("/", express.static("dist"));
 app.use(express.json());
-
-const mockData = [
-  {
-    id: crypto.randomUUID(),
-    author: "Surya",
-    course: "Computer Science",
-    name: "Algorithms",
-    associatedTokens: ["Data structures", "Analysis", "Formal proof"],
-    version: 1,
-    attachments: [],
-    deleted: false,
-  },
-  {
-    id: crypto.randomUUID(),
-    author: "Surya",
-    course: "Machine Learning",
-    name: "Neural Networks",
-    associatedTokens: ["Analysis", "Formal proof", "Coding"],
-    version: 1,
-    attachments: [],
-    deleted: false,
-  },
-  {
-    id: crypto.randomUUID(),
-    author: "Surya",
-    course: "Network Security",
-    name: "Encryption",
-    associatedTokens: ["Coding", "Networks", "Formal proof"],
-    version: 1,
-    attachments: [],
-    deleted: false,
-  },
-];
 
 app.get("/api", (req, res) => {
   res.send("Hello World!");
 });
 
-app.post("/api/files", upload.single('file'), (req, res) => {
-  console.log(`Received uploaded file: ${req.file.filename}`)
+app.post("/api/files", upload.single("file"), (req, res) => {
+  console.log(`Received uploaded file: ${req.file.filename}`);
   delete req.file.buffer;
-  res.json({url: ""})
-})
+  res.json({ url: "" });
+});
 
-app.get("/api/tokens", (req, res) => {
+app.get("/api/tokens", async (req, res) => {
   // Get data from database
-  const data = mockData;
+  const data = await getTokens();
 
   const freshData = Object.values(Object.groupBy(data, ({ id }) => id))
     .map((history) => {
@@ -72,31 +67,38 @@ app.get("/api/tokens", (req, res) => {
   res.json(freshData);
 });
 
-app.post("/api/tokens/", (req, res) => {
+app.post("/api/tokens/", async (req, res) => {
   // Add data to database
   console.log(`Adding new Token: ${req.body.name}`);
-  mockData.push(req.body);
+  // mockData.push(req.body);
+  await writeTokens([req.body])
   res.json({});
 });
 
-app.put("/api/tokens", (req, res) => {
+app.put("/api/tokens", async (req, res) => {
   // Add data to database
   console.log(`Updating token: ${req.body.name}`);
-  mockData.push(req.body);
+  // mockData.push(req.body);
+  await writeTokens([req.body])
   res.json({});
 });
 
-app.delete("/api/tokens/:id", (req, res) => {
+app.delete("/api/tokens/:id", async (req, res) => {
+
+  // To be finished
+
   let max_version = null;
 
-  mockData
+  const data = await getTokens();
+
+  data
     .filter(({ id }) => id === req.params.id)
     .forEach((t) => {
       if (max_version === null) max_version = t.version;
       else if (t.version > max_version) max_version = t.version;
     });
 
-  const deleted = mockData.findIndex(
+  const deleted = data.findIndex(
     ({ id, version }) => id === req.params.id && version === max_version
   );
 
@@ -105,9 +107,9 @@ app.delete("/api/tokens/:id", (req, res) => {
   );
 
   // Mark as deleted in database
-  mockData[deleted].deleted = true;
+  data[deleted].deleted = true;
 
-  res.json({})
+  res.json({});
 });
 
 app.listen(port, () => {
