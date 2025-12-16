@@ -17,7 +17,7 @@ const container = database.container("Tokens");
 
 async function getTokens() {
   const { resources } = await container.items.readAll().fetchAll();
-  return resources.map((r) => ({ ...r, id: r.dataId }));
+  return resources.map((r) => ({ ...r, id: r.dataId, databaseId: r.id }));
 }
 
 async function writeTokens(tokens) {
@@ -28,6 +28,12 @@ async function writeTokens(tokens) {
   });
 
   await Promise.all(tasks);
+}
+
+async function updateToken(token) {
+  token.dataId = token.id;
+  token.id = token.databaseId;
+  await container.upsert(token);
 }
 
 ///
@@ -103,11 +109,13 @@ app.delete("/api/tokens/:id", async (req, res) => {
   );
 
   console.log(
-    `Attempting to delete token ${req.params.id} version: ${max_version}`
+    `Attempting to delete token ${data[deleted].name} version: ${max_version}`
   );
 
   // Mark as deleted in database
   data[deleted].deleted = true;
+
+  await updateToken(data[deleted])
 
   res.json({});
 });
