@@ -114,7 +114,7 @@ app.delete("/api/tokens/:id", async (req, res) => {
   );
 
   console.log(
-    `Attempting to delete token ${data[deleted].name} version: ${max_version}`
+    `Attempting to delete token: "${data[deleted].name}" version: ${max_version}`
   );
 
   // Mark as deleted in database
