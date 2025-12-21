@@ -1,10 +1,15 @@
 import express from "express";
 import multer from "multer";
 import { CosmosClient } from "@azure/cosmos";
+import { config } from "dotenv";
 
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
 const port = process.env.PORT || 3000;
+
+if(process.argv.includes("--dev")) {
+  config()
+}
 
 const client = new CosmosClient({
   connectionString: process.env.COSMOS_CONNECTION_STRING,
@@ -24,7 +29,7 @@ async function writeTokens(tokens) {
   const tasks = tokens.map(async (token) => {
     token.dataId = token.id;
     delete token.id;
-    await container.upsert(token);
+    await container.items.upsert(token);
   });
 
   await Promise.all(tasks);
@@ -33,7 +38,7 @@ async function writeTokens(tokens) {
 async function updateToken(token) {
   token.dataId = token.id;
   token.id = token.databaseId;
-  await container.upsert(token);
+  await container.items.upsert(token);
 }
 
 ///

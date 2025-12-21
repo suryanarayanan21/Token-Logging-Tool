@@ -4,11 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "serve": "./setenv.sh && node server.js",
+    "dev": "node server.js --dev",
     "start": "node server.js",
     "setenv": "set -o allexport && source ./.env && set +o allexport"
   },
@@ -17,6 +16,7 @@
     "@azure/identity": "^4.13.0",
     "@reduxjs/toolkit": "^2.10.1",
     "@tailwindcss/vite": "^4.1.17",
+    "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "multer": "^2.0.2",
     "react": "^19.1.1",
