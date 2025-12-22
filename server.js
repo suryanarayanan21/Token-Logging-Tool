@@ -1,20 +1,15 @@
 import express from "express";
 import multer from "multer";
-import { CosmosClient } from "@azure/cosmos";
-import { config } from "dotenv";
 import { FileClient } from "./services/files.js";
 import { TokenClient } from "./services/tokens.js";
+import { Environment } from "./services/environment.js";
 
+const environment = new Environment();
 const app = express();
 const upload = multer({ storage: multer.memoryStorage() });
-const port = process.env.PORT || 3000;
-
-if (process.argv.includes("--dev")) {
-  config();
-}
-
-const files = new FileClient(process.env.BLOB_CONNECTION_STRING);
-const tokens = new TokenClient(process.env.COSMOS_CONNECTION_STRING);
+const port = environment.port;
+const files = new FileClient(environment.blob_connection_string);
+const tokens = new TokenClient(environment.cosmos_connection_string);
 
 app.use("/", express.static("dist"));
 app.use(express.json());
