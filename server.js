@@ -3,6 +3,7 @@ import multer from "multer";
 import { FileClient } from "./services/files.js";
 import { TokenClient } from "./services/tokens.js";
 import { Environment } from "./services/environment.js";
+import { Readable } from "node:stream";
 
 const environment = new Environment();
 const app = express();
@@ -28,10 +29,12 @@ app.get("/api/files", async (req, res) => {
   await fileStream.pipe(res);
 });
 
-app.post("/api/files", upload.single("file"), (req, res) => {
-  console.log(`Received uploaded file: ${req.file.filename}`);
+app.post("/api/files", upload.single("file"), async (req, res) => {
+  console.log(`Received uploaded file: ${req.file.originalname}`);
+  const stream = Readable.from(req.file.buffer);
+  const url = await files.uploadFile(stream);
   delete req.file.buffer;
-  res.json({ url: "" });
+  res.json({ url });
 });
 
 app.get("/api/tokens", async (req, res) => {
