@@ -4,7 +4,7 @@ type TagInputProps = {
   tagList: string[];
   initialList?: string[];
   onChange: (tags: string[]) => void;
-}
+};
 
 type TagProps = {
   text: string;
@@ -14,6 +14,7 @@ type TagProps = {
 type SearchInputProps = {
   tagList: string[];
   onCreateTag: (tag: string) => void;
+  placeholder: string;
 };
 
 type SuggestionItemProps = {
@@ -65,7 +66,11 @@ function SuggestionItem({
   );
 }
 
-function SearchInput({ tagList: fullTagList, onCreateTag }: SearchInputProps) {
+export function SearchInput({
+  tagList: fullTagList,
+  onCreateTag,
+  placeholder,
+}: SearchInputProps) {
   const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
   const [value, setValue] = useState<string>("");
   const [tagList, setTaglist] = useState<string[]>([]);
@@ -125,7 +130,7 @@ function SearchInput({ tagList: fullTagList, onCreateTag }: SearchInputProps) {
         }}
         className="outline-0"
         type="text"
-        placeholder="Add associated tokens"
+        placeholder={placeholder}
       />
       {showSuggestions && (
         <div className="absolute top-10 left-2 flex flex-col bg-white border rounded-sm border-gray-700 min-w-50 p-2 gap-0.5">
@@ -161,7 +166,7 @@ function SearchInput({ tagList: fullTagList, onCreateTag }: SearchInputProps) {
   );
 }
 
-function TagInput({ initialList, tagList, onChange }:TagInputProps) {
+function TagInput({ initialList, tagList, onChange }: TagInputProps) {
   const [tags, setTags] = useState<string[] | undefined>(initialList);
 
   const deleteTag = (index: number) => {
@@ -179,10 +184,11 @@ function TagInput({ initialList, tagList, onChange }:TagInputProps) {
       <SearchInput
         tagList={tagList}
         onCreateTag={(tag) => {
-          let clone = [...(tags ?? []), tag]
+          let clone = [...(tags ?? []), tag];
           onChange(clone);
           setTags(clone);
         }}
+        placeholder="Add associated tokens"
       />
     </div>
   );
