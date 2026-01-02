@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+// import { styled } from "@mui/material/styles";
 import TagInput from "./TagInput";
 import { FaPlus } from "react-icons/fa6";
 import { IoCloseOutline } from "react-icons/io5";
@@ -8,8 +9,13 @@ import {
 } from "../../data/tokenApi";
 import type { Token } from "../../types/Token";
 import TextField from "@mui/material/TextField";
-import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
-import Box from '@mui/material/Box';
+import Autocomplete, {
+  createFilterOptions,
+  // autocompleteClasses,
+} from "@mui/material/Autocomplete";
+import Box from "@mui/material/Box";
+import Paper from "@mui/material/Paper";
+// import Popper from "@mui/material/Popper";
 
 export type TokenEntry = Pick<
   Token,
@@ -28,6 +34,20 @@ type AutoCompleteOption = {
 };
 
 const filter = createFilterOptions<AutoCompleteOption>();
+
+// const StyledPopper = styled(Popper)(({ theme }) => ({
+//   [`& .${autocompleteClasses.paper}`]: {
+//     my: 50,
+//     backgroundColor: 'blue',
+//   }
+// }));
+
+// const StyledAutoComplete = styled(Autocomplete<AutoCompleteOption>)(() => ({
+//   [`.${autocompleteClasses.paper}`]: {
+//     my: 50,
+//     backgroundColor: 'blue',
+//   }
+// }))
 
 export const TagEntryForm = ({ onChange }: TagEntryFormProps) => {
   const [tokenIdSeed, setTokenIdSeed] = useState<number>(1);
@@ -74,45 +94,104 @@ export const TagEntryForm = ({ onChange }: TagEntryFormProps) => {
                               id: i + 1,
                               value: t.name,
                               title: t.name,
-                              subtext: "subtext",
+                              subtext: t.course,
                             }))
                           : []
                       }
                       filterOptions={(options, state) => {
                         const filtered = filter(options, state);
-                        filtered.unshift({
-                          id: 0,
-                          value: state.inputValue,
-                          title: `New Token: ${state.inputValue}`,
-                          subtext: "",
-                        });
+                        if (state.inputValue !== "") {
+                          filtered.unshift({
+                            id: 0,
+                            value: state.inputValue,
+                            title: `${state.inputValue}`,
+                            subtext: "New Token",
+                          });
+                        }
 
                         return filtered;
                       }}
-                      onChange={(
-                        _e: any,
-                        value: AutoCompleteOption | null
-                      ) => {
-                        if(value?.id !== 0){
+                      onChange={(_e: any, value: AutoCompleteOption | null) => {
+                        if (
+                          value?.id &&
+                          value?.id !== 0 &&
+                          value?.value !== ""
+                        ) {
                           alert("Navigate to edit tab");
+                        } else {
+                          setTokens(t => {
+                            const clone = [...t];
+                            clone[index].name = value?.value ?? "";
+                            return clone;
+                          })
                         }
                       }}
-                      getOptionKey={o => o.id}
-                      getOptionLabel={o => o.value}
-                      renderInput={(params) => <TextField {...params} />}
+                      getOptionKey={(o) => o.id}
+                      getOptionLabel={(o) => o.value}
+                      renderInput={(params) => (
+                        <TextField
+                          {...params}
+                          sx={{
+                            "& fieldset": { border: "none" },
+                            "& .MuiOutlinedInput-root": {
+                              "&:hover fieldset": { border: "none" }, // Optional: removes hover border
+                              "&.Mui-focused fieldset": { border: "none" }, // Optional: removes focus border
+                            },
+                          }}
+                        />
+                      )}
                       renderOption={(props, option, _state, _ownerState) => {
                         const { key, ...optionProps } = props;
-                        return <Box
-                          key={key}
-                          component='li'
-                          {...optionProps}
-                        >
-                          {option.title}
-                        </Box>
+                        return (
+                          <Box key={key} component="li" {...optionProps}>
+                            <div className="flex flex-col gap-0.5">
+                              <span className="text-sm">{option.title}</span>
+                              <span className="text-xs text-gray-600">
+                                {option.subtext}
+                              </span>
+                            </div>
+                          </Box>
+                        );
                       }}
                       clearOnBlur
                       clearIcon={false}
-                      sx={{width: '100%'}}
+                      slotProps={{
+                        popper: {
+                          placement: "bottom-end",
+                          popperOptions: {
+                            modifiers: [
+                              {
+                                name: "offset",
+                                options: {
+                                  offset: [0, 10],
+                                },
+                              },
+                            ],
+                          },
+                        },
+                        paper: {
+                          sx: {
+                            width: 400,
+                          },
+                        },
+                      }}
+                      slots={{
+                        paper: (props) => {
+                          const { children, ...otherProps } = props;
+
+                          return (
+                            <Paper {...otherProps}>
+                              <span className="block text-xs text-gray-500 p-3">
+                                Create a new Token or check for existing Tokens
+                              </span>
+                              {children}
+                            </Paper>
+                          );
+                        },
+                      }}
+                      sx={{
+                        width: "100%",
+                      }}
                     />
                     <button
                       className="h-full cursor-pointer text-gray-500 hover:text-gray-800"
