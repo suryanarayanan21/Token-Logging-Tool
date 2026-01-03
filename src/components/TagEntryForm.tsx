@@ -27,6 +27,7 @@ type AutoCompleteOption = {
   id: number;
   title: string;
   subtext: string;
+  type: string;
 };
 
 const filter = createFilterOptions<AutoCompleteOption>();
@@ -78,7 +79,8 @@ export const TagEntryForm = ({ onChange }: TagEntryFormProps) => {
                               id: i + 1,
                               value: t.name,
                               title: t.name,
-                              subtext: t.course,
+                              subtext: `${t.learningChapter}, ${t.course}`,
+                              type: t.type,
                             }))
                           : []
                       }
@@ -90,6 +92,7 @@ export const TagEntryForm = ({ onChange }: TagEntryFormProps) => {
                             value: state.inputValue,
                             title: `${state.inputValue}`,
                             subtext: "New Token",
+                            type: token.type,
                           });
                         }
 
@@ -115,6 +118,7 @@ export const TagEntryForm = ({ onChange }: TagEntryFormProps) => {
                       renderInput={(params) => (
                         <TextField
                           {...params}
+                          placeholder="Token Name"
                           sx={{
                             "& fieldset": { border: "none" },
                             "& .MuiOutlinedInput-root": {
@@ -129,7 +133,18 @@ export const TagEntryForm = ({ onChange }: TagEntryFormProps) => {
                         return (
                           <Box key={key} component="li" {...optionProps}>
                             <div className="flex flex-col gap-0.5">
-                              <span className="text-sm">{option.title}</span>
+                              <div className="flex flex-row gap-1 items-center">
+                                <span className="text-sm">{option.title}</span>
+                                <span
+                                  className={`text-xs ${
+                                    option.type === "Domain General"
+                                      ? "text-green-600"
+                                      : "text-blue-600"
+                                  }`}
+                                >
+                                  {option.type}
+                                </span>
+                              </div>
                               <span className="text-xs text-gray-600">
                                 {option.subtext}
                               </span>
@@ -195,12 +210,24 @@ export const TagEntryForm = ({ onChange }: TagEntryFormProps) => {
                   <div className="flex flex-row items-center pl-2 pr-2">
                     <TextField
                       value={token.type}
+                      select
                       onChange={(e) => {
                         setTokens((t) => {
                           const clone = [...t];
-                          clone[index].learningChapter = e.target.value;
+                          if (e.target.value === "Domain Specific") {
+                            clone[index].type = "Domain Specific";
+                          } else {
+                            clone[index].type = "Domain General";
+                          }
                           return clone;
                         });
+                      }}
+                      sx={{
+                        "& fieldset": { border: "none" },
+                        "& .MuiOutlinedInput-root": {
+                          "&:hover fieldset": { border: "none" },
+                          "&.Mui-focused fieldset": { border: "none" },
+                        },
                       }}
                     >
                       <MenuItem value={"Domain General"}>
