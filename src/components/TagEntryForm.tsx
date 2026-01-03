@@ -11,10 +11,11 @@ import TextField from "@mui/material/TextField";
 import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
+import MenuItem from "@mui/material/MenuItem";
 
 export type TokenEntry = Pick<
   Token,
-  "id" | "name" | "associatedTokens" | "course"
+  "id" | "name" | "associatedTokens" | "course" | "type" | "learningChapter"
 >;
 
 type TagEntryFormProps = {
@@ -38,6 +39,8 @@ export const TagEntryForm = ({ onChange }: TagEntryFormProps) => {
       name: "",
       course: "",
       associatedTokens: [],
+      type: "Domain General",
+      learningChapter: "",
     },
   ]);
 
@@ -115,8 +118,8 @@ export const TagEntryForm = ({ onChange }: TagEntryFormProps) => {
                           sx={{
                             "& fieldset": { border: "none" },
                             "& .MuiOutlinedInput-root": {
-                              "&:hover fieldset": { border: "none" }, // Optional: removes hover border
-                              "&.Mui-focused fieldset": { border: "none" }, // Optional: removes focus border
+                              "&:hover fieldset": { border: "none" },
+                              "&.Mui-focused fieldset": { border: "none" },
                             },
                           }}
                         />
@@ -190,22 +193,26 @@ export const TagEntryForm = ({ onChange }: TagEntryFormProps) => {
                 </td>
                 <td className="border-r border-r-gray-400 pb-2 pt-2 w-56 min-w-32">
                   <div className="flex flex-row items-center pl-2 pr-2">
-                    <input
-                      className="w-full outline-0"
-                      type="text"
-                      placeholder="Course"
-                      value={token.course}
+                    <TextField
+                      value={token.type}
                       onChange={(e) => {
                         setTokens((t) => {
                           const clone = [...t];
-                          clone[index].course = e.target.value;
+                          clone[index].learningChapter = e.target.value;
                           return clone;
                         });
                       }}
-                    />
+                    >
+                      <MenuItem value={"Domain General"}>
+                        {"Domain General"}
+                      </MenuItem>
+                      <MenuItem value={"Domain Specific"}>
+                        {"Domain Specific"}
+                      </MenuItem>
+                    </TextField>
                   </div>
                 </td>
-                <td className="pb-2 pt-2">
+                <td className="border-r border-r-gray-400 pb-2 pt-2">
                   <div className="w-full flex flex-row items-center justify-start">
                     <TagInput
                       tagList={[
@@ -218,6 +225,40 @@ export const TagEntryForm = ({ onChange }: TagEntryFormProps) => {
                         setTokens((t) => {
                           const clone = [...t];
                           clone[index].associatedTokens = [...tags];
+                          return clone;
+                        });
+                      }}
+                    />
+                  </div>
+                </td>
+                <td className="border-r border-r-gray-400 pb-2 pt-2 w-56 min-w-32">
+                  <div className="flex flex-row items-center pl-2 pr-2">
+                    <input
+                      className="w-full outline-0"
+                      type="text"
+                      placeholder="Chapter"
+                      value={token.learningChapter}
+                      onChange={(e) => {
+                        setTokens((t) => {
+                          const clone = [...t];
+                          clone[index].learningChapter = e.target.value;
+                          return clone;
+                        });
+                      }}
+                    />
+                  </div>
+                </td>
+                <td className="border-r border-r-gray-400 pb-2 pt-2 w-56 min-w-32">
+                  <div className="flex flex-row items-center pl-2 pr-2">
+                    <input
+                      className="w-full outline-0"
+                      type="text"
+                      placeholder="Course"
+                      value={token.course}
+                      onChange={(e) => {
+                        setTokens((t) => {
+                          const clone = [...t];
+                          clone[index].course = e.target.value;
                           return clone;
                         });
                       }}
@@ -238,6 +279,8 @@ export const TagEntryForm = ({ onChange }: TagEntryFormProps) => {
                 name: "",
                 course: "",
                 associatedTokens: [],
+                learningChapter: "",
+                type: "Domain General",
               });
               return clone;
             });
