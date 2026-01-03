@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-// import { styled } from "@mui/material/styles";
 import TagInput from "./TagInput";
 import { FaPlus } from "react-icons/fa6";
 import { IoCloseOutline } from "react-icons/io5";
@@ -9,13 +8,9 @@ import {
 } from "../../data/tokenApi";
 import type { Token } from "../../types/Token";
 import TextField from "@mui/material/TextField";
-import Autocomplete, {
-  createFilterOptions,
-  // autocompleteClasses,
-} from "@mui/material/Autocomplete";
+import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
-// import Popper from "@mui/material/Popper";
 
 export type TokenEntry = Pick<
   Token,
@@ -34,20 +29,6 @@ type AutoCompleteOption = {
 };
 
 const filter = createFilterOptions<AutoCompleteOption>();
-
-// const StyledPopper = styled(Popper)(({ theme }) => ({
-//   [`& .${autocompleteClasses.paper}`]: {
-//     my: 50,
-//     backgroundColor: 'blue',
-//   }
-// }));
-
-// const StyledAutoComplete = styled(Autocomplete<AutoCompleteOption>)(() => ({
-//   [`.${autocompleteClasses.paper}`]: {
-//     my: 50,
-//     backgroundColor: 'blue',
-//   }
-// }))
 
 export const TagEntryForm = ({ onChange }: TagEntryFormProps) => {
   const [tokenIdSeed, setTokenIdSeed] = useState<number>(1);
@@ -119,11 +100,11 @@ export const TagEntryForm = ({ onChange }: TagEntryFormProps) => {
                         ) {
                           alert("Navigate to edit tab");
                         } else {
-                          setTokens(t => {
+                          setTokens((t) => {
                             const clone = [...t];
                             clone[index].name = value?.value ?? "";
                             return clone;
-                          })
+                          });
                         }
                       }}
                       getOptionKey={(o) => o.id}
