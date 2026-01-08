@@ -33,6 +33,16 @@ type FitlerSelectProps = {
   value: string[];
 };
 
+export const getEmptyFilter: () => TokenFilter = () => {
+  return {
+    nameFilter: "",
+    authorFilter: [],
+    courseFilter: [],
+    typeFilter: [],
+    chapterFilter: [],
+  };
+};
+
 const FilterMenuItem = ({
   text,
   selectedItems,

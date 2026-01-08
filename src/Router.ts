@@ -18,10 +18,7 @@ export default createBrowserRouter([
         Component: NewTokens,
       },
       {
-        path: "edit/:author",
-        loader: async ({params}) => {
-          return { filter: params.filter }
-        },
+        path: "edit/",
         Component: EditTokens,
       }
     ],

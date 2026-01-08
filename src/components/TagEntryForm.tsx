@@ -12,6 +12,8 @@ import Autocomplete, { createFilterOptions } from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import MenuItem from "@mui/material/MenuItem";
+import { useNavigate } from "react-router";
+import { getEmptyFilter, type TokenFilter } from "./FilterBar";
 
 export type TokenEntry = Pick<
   Token,
@@ -28,11 +30,14 @@ type AutoCompleteOption = {
   title: string;
   subtext: string;
   type: string;
+  course: string;
+  chapter: string;
 };
 
 const filter = createFilterOptions<AutoCompleteOption>();
 
 export const TagEntryForm = ({ onChange }: TagEntryFormProps) => {
+  const navigate = useNavigate();
   const [tokenIdSeed, setTokenIdSeed] = useState<number>(1);
   const [tokens, setTokens] = useState<TokenEntry[]>([
     {
@@ -81,6 +86,8 @@ export const TagEntryForm = ({ onChange }: TagEntryFormProps) => {
                               title: t.name,
                               subtext: `${t.learningChapter}, ${t.course}`,
                               type: t.type,
+                              course: t.course,
+                              chapter: t.learningChapter
                             }))
                           : []
                       }
@@ -93,6 +100,8 @@ export const TagEntryForm = ({ onChange }: TagEntryFormProps) => {
                             title: `${state.inputValue}`,
                             subtext: "New Token",
                             type: token.type,
+                            course: token.course,
+                            chapter: token.learningChapter
                           });
                         }
 
@@ -104,7 +113,13 @@ export const TagEntryForm = ({ onChange }: TagEntryFormProps) => {
                           value?.id !== 0 &&
                           value?.value !== ""
                         ) {
-                          alert("Navigate to edit tab");
+                          navigate('/edit', {state: {
+                            ...getEmptyFilter(),
+                            nameFilter: value.value,
+                            typeFilter: [value.type],
+                            courseFilter: [value.course],
+                            chapterFilter: [value.chapter]
+                          } as TokenFilter})
                         } else {
                           setTokens((t) => {
                             const clone = [...t];

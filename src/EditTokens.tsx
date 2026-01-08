@@ -1,10 +1,14 @@
-import { useLoaderData } from "react-router";
+import { useLocation } from "react-router";
 import { useGetTokensQuery } from "../data/tokenApi";
 import { TagEditForm } from "./components/TagEditForm";
 import { ToastContainer, toast } from "react-toastify";
 import { useState } from "react";
 
-import { FilterBar, type TokenFilter } from "./components/FilterBar";
+import {
+  FilterBar,
+  getEmptyFilter,
+  type TokenFilter,
+} from "./components/FilterBar";
 import type { Token } from "../types/Token";
 
 const shouldShowToken = (token: Token, filter: TokenFilter) => {
@@ -25,17 +29,11 @@ const shouldShowToken = (token: Token, filter: TokenFilter) => {
 };
 
 export const EditTokens = () => {
-  const { filter: initialFilter } = useLoaderData();
+  const { state: initialFilter } = useLocation();
   const { data } = useGetTokensQuery();
 
   const [filter, setFilter] = useState<TokenFilter>(
-    initialFilter ?? {
-      nameFilter: "",
-      authorFilter: [],
-      courseFilter: [],
-      typeFilter: [],
-      chapterFilter: [],
-    }
+    initialFilter ?? getEmptyFilter()
   );
 
   if (data === undefined) return <></>;
