@@ -9,11 +9,14 @@ import type { Token } from "../types/Token";
 
 const shouldShowToken = (token: Token, filter: TokenFilter) => {
   if (
-    filter.nameFilter.includes(token.name) &&
-    filter.authorFilter.includes(token.author) &&
-    filter.chapterFilter.includes(token.learningChapter) &&
-    filter.courseFilter.includes(token.course) &&
-    filter.typeFilter.includes(token.type)
+    (filter.nameFilter == "" || token.name.includes(filter.nameFilter)) &&
+    (filter.authorFilter.length === 0 ||
+      filter.authorFilter.includes(token.author)) &&
+    (filter.chapterFilter.length === 0 ||
+      filter.chapterFilter.includes(token.learningChapter)) &&
+    (filter.courseFilter.length === 0 ||
+      filter.courseFilter.includes(token.course)) &&
+    (filter.typeFilter.length === 0 || filter.typeFilter.includes(token.type))
   ) {
     return true;
   } else {

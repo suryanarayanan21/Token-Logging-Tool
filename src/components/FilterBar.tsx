@@ -1,6 +1,7 @@
-import MenuItem from "@mui/material/MenuItem";
+import MenuItem, { type MenuItemProps } from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
+import { FaCheck } from "react-icons/fa6";
 
 export type TokenFilter = {
   nameFilter: string;
@@ -17,6 +18,26 @@ type FilterBarProps = {
   authors: string[];
   chapters: string[];
   courses: string[];
+};
+
+type FilterMenuItemProps = {
+  text: string;
+  selectedItems: string[];
+};
+
+const FilterMenuItem = ({
+  text,
+  selectedItems,
+  ...menuProps
+}: FilterMenuItemProps & MenuItemProps) => {
+  return (
+    <MenuItem {...menuProps}>
+      <div className="flex flex-row p-2 items-center justify-between gap-4">
+        <span className="text-sm text-gray-800">{text}</span>
+        {selectedItems.includes(text) ? <FaCheck color="#89f56e" /> : <></>}
+      </div>
+    </MenuItem>
+  );
 };
 
 export const FilterBar = ({
@@ -53,7 +74,11 @@ export const FilterBar = ({
             }}
           >
             {tokenTypes.map((t) => (
-              <MenuItem value={t}>t</MenuItem>
+              <FilterMenuItem
+                value={t}
+                text={t}
+                selectedItems={filter.typeFilter}
+              />
             ))}
           </Select>
         </div>
@@ -62,6 +87,7 @@ export const FilterBar = ({
           <Select
             value={filter.authorFilter}
             multiple={true}
+            // renderValue={(selected) => selected.join(", ")}
             onChange={(e) => {
               setFilter((f) => ({
                 ...f,
@@ -70,7 +96,11 @@ export const FilterBar = ({
             }}
           >
             {authors.map((t) => (
-              <MenuItem value={t}>t</MenuItem>
+              <FilterMenuItem
+                value={t}
+                text={t}
+                selectedItems={filter.authorFilter}
+              />
             ))}
           </Select>
         </div>
@@ -87,7 +117,11 @@ export const FilterBar = ({
             }}
           >
             {courses.map((t) => (
-              <MenuItem value={t}>t</MenuItem>
+              <FilterMenuItem
+                value={t}
+                text={t}
+                selectedItems={filter.courseFilter}
+              />
             ))}
           </Select>
         </div>
@@ -104,7 +138,11 @@ export const FilterBar = ({
             }}
           >
             {chapters.map((t) => (
-              <MenuItem value={t}>t</MenuItem>
+              <FilterMenuItem
+                value={t}
+                text={t}
+                selectedItems={filter.chapterFilter}
+              />
             ))}
           </Select>
         </div>
