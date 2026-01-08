@@ -41,7 +41,7 @@ export const EditTokens = () => {
   if (data === undefined) return <></>;
 
   return (
-    <div className="flex flex-col gap-4 items-center justify-center p-10 w-dvw h-dvh">
+    <div className="flex flex-col gap-4 items-center justify-start p-10 w-dvw h-dvh">
       <p className="text-2xl mb-4 text-gray-800">
         You can view / edit existing tokens here.
       </p>

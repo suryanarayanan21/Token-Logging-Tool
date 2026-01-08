@@ -1,7 +1,8 @@
 import MenuItem, { type MenuItemProps } from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import TextField from "@mui/material/TextField";
-import { FaCheck } from "react-icons/fa6";
+import { useState } from "react";
+import { FaCaretDown, FaCaretRight, FaCheck } from "react-icons/fa6";
 
 export type TokenFilter = {
   nameFilter: string;
@@ -25,18 +26,58 @@ type FilterMenuItemProps = {
   selectedItems: string[];
 };
 
+type FitlerSelectProps = {
+  name: string;
+  options: string[];
+  onSelect: (selection: string[] | string) => void;
+  value: string[];
+};
+
 const FilterMenuItem = ({
   text,
   selectedItems,
   ...menuProps
 }: FilterMenuItemProps & MenuItemProps) => {
+  const { sx, ...otherProps } = menuProps;
+
   return (
-    <MenuItem {...menuProps}>
-      <div className="flex flex-row p-2 items-center justify-between gap-4">
-        <span className="text-sm text-gray-800">{text}</span>
-        {selectedItems.includes(text) ? <FaCheck color="#89f56e" /> : <></>}
+    <MenuItem sx={{ width: 232 }} {...otherProps}>
+      <div className="flex flex-row p-1 w-full items-center gap-3">
+        <p className="flex grow text-sm text-gray-800 text-ellipsis">{text}</p>
+        {selectedItems.includes(text) ? (
+          <FaCheck className="flex-none w-8" color="#295e1b" />
+        ) : (
+          <></>
+        )}
       </div>
     </MenuItem>
+  );
+};
+
+const FilterSelect = ({
+  name,
+  value,
+  onSelect,
+  options,
+}: FitlerSelectProps) => {
+  return (
+    <div className="flex flex-row gap-3 items-center">
+      <span className="text-sm text-gray-700">{name}</span>
+      <Select
+        sx={{
+          width: 232,
+          height: 42,
+        }}
+        value={value}
+        multiple={true}
+        renderValue={(selection) => selection.join(", ")}
+        onChange={(e) => onSelect(e.target.value)}
+      >
+        {options.map((t) => (
+          <FilterMenuItem value={t} text={t} selectedItems={value} />
+        ))}
+      </Select>
+    </div>
   );
 };
 
@@ -48,105 +89,91 @@ export const FilterBar = ({
   chapters,
   courses,
 }: FilterBarProps) => {
+  const [showFilters, setShowFilters] = useState(false);
+
   return (
-    <div className="flex flex-col p-3 gap-2">
-      <p>Fiters</p>
-      <div className="flex flex-row gap-3">
-        <div className="flex flex-row gap-1">
-          <p>Name</p>
-          <TextField
-            value={filter.nameFilter}
-            onChange={(e) => {
-              setFilter((f) => ({ ...f, nameFilter: e.target.value }));
+    <div className="flex flex-col p-5 gap-4 w-full bg-gray-200 rounded-lg">
+      <div
+        className="flex flex-row gap-2 items-center"
+        onClick={() => {
+          setShowFilters(!showFilters);
+        }}
+      >
+        {showFilters ? (
+          <FaCaretDown className="text-gray-700" />
+        ) : (
+          <FaCaretRight className="text-gray-700" />
+        )}
+
+        <p className="text-sm text-gray-800">Filters</p>
+      </div>
+      {showFilters && (
+        <div className="flex flex-row items-center justify-between flex-wrap">
+          <div className="flex flex-row items-center gap-3">
+            <p className="text-sm text-gray-700">Name</p>
+            <TextField
+              value={filter.nameFilter}
+              sx={{
+                "& .MuiInputBase-root": {
+                  height: 42, // Sets the height of the entire input container
+                  width: 232,
+                },
+                // "& .MuiInputBase-input": {
+                //   paddingTop: "8px", // Adjust padding to vertically center text/label
+                //   paddingBottom: "8px",
+                // },
+              }}
+              onChange={(e) => {
+                setFilter((f) => ({ ...f, nameFilter: e.target.value }));
+              }}
+            />
+          </div>
+          <FilterSelect
+            name="Token Types"
+            value={filter.typeFilter}
+            onSelect={(selection) => {
+              setFilter((f) => ({
+                ...f,
+                typeFilter: [...selection],
+              }));
             }}
+            options={tokenTypes}
+          />
+          <FilterSelect
+            name="Authors"
+            value={filter.authorFilter}
+            onSelect={(selection) => {
+              setFilter((f) => ({
+                ...f,
+                authorFilter: [...selection],
+              }));
+            }}
+            options={authors}
+          />
+          <FilterSelect
+            name="Courses"
+            value={filter.courseFilter}
+            onSelect={(selection) => {
+              setFilter((f) => ({
+                ...f,
+                courseFilter: [...selection],
+              }));
+            }}
+            options={courses}
+          />
+          <FilterSelect
+            name="Learning Chapters"
+            value={filter.chapterFilter}
+            onSelect={(selection) => {
+              setFilter((f) => ({
+                ...f,
+                chapterFilter: [...selection],
+              }));
+            }}
+            options={chapters}
           />
         </div>
-        <div className="flex flex-row gap-1">
-          <p>Token Types</p>
-          <Select
-            value={filter.typeFilter}
-            multiple={true}
-            onChange={(e) => {
-              setFilter((f) => ({
-                ...f,
-                typeFilter: [...e.target.value],
-              }));
-            }}
-          >
-            {tokenTypes.map((t) => (
-              <FilterMenuItem
-                value={t}
-                text={t}
-                selectedItems={filter.typeFilter}
-              />
-            ))}
-          </Select>
-        </div>
-        <div className="flex flex-row gap-1">
-          <p>Authors</p>
-          <Select
-            value={filter.authorFilter}
-            multiple={true}
-            // renderValue={(selected) => selected.join(", ")}
-            onChange={(e) => {
-              setFilter((f) => ({
-                ...f,
-                authorFilter: [...e.target.value],
-              }));
-            }}
-          >
-            {authors.map((t) => (
-              <FilterMenuItem
-                value={t}
-                text={t}
-                selectedItems={filter.authorFilter}
-              />
-            ))}
-          </Select>
-        </div>
-        <div className="flex flex-row gap-1">
-          <p>Courses</p>
-          <Select
-            value={filter.courseFilter}
-            multiple={true}
-            onChange={(e) => {
-              setFilter((f) => ({
-                ...f,
-                courseFilter: [...e.target.value],
-              }));
-            }}
-          >
-            {courses.map((t) => (
-              <FilterMenuItem
-                value={t}
-                text={t}
-                selectedItems={filter.courseFilter}
-              />
-            ))}
-          </Select>
-        </div>
-        <div className="flex flex-row gap-1">
-          <p>Learning Chapters</p>
-          <Select
-            value={filter.chapterFilter}
-            multiple={true}
-            onChange={(e) => {
-              setFilter((f) => ({
-                ...f,
-                chapterFilter: [...e.target.value],
-              }));
-            }}
-          >
-            {chapters.map((t) => (
-              <FilterMenuItem
-                value={t}
-                text={t}
-                selectedItems={filter.chapterFilter}
-              />
-            ))}
-          </Select>
-        </div>
-      </div>
+      )}
     </div>
   );
 };
