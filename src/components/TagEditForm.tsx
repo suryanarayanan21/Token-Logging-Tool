@@ -36,7 +36,8 @@ export const TagEditForm = ({ token }: TagEditFormProps) => {
       <table className="w-full table-fixed">
         <tr key={token.id}>
           <td className="border-r border-r-gray-400 pb-2 pt-2 w-56 min-w-32">
-            <div className="flex flex-row items-center pl-2 pr-2">
+            <div className="flex flex-col items-start justify-center pl-2 pr-2 gap-1">
+              <span className="text-sm text-gray-600">Name</span>
               <input
                 className="w-full outline-0"
                 type="text"
@@ -54,7 +55,8 @@ export const TagEditForm = ({ token }: TagEditFormProps) => {
             </div>
           </td>
           <td className="border-r border-r-gray-400 pb-2 pt-2 w-56 min-w-32">
-            <div className="flex flex-row items-center pl-2 pr-2">
+            <div className="flex flex-col items-start justify-center gap-1 pl-2 pr-2">
+              <span className="text-sm text-gray-600">Type</span>
               <TextField
                 value={tokenType}
                 select
@@ -89,7 +91,8 @@ export const TagEditForm = ({ token }: TagEditFormProps) => {
             </div>
           </td>
           <td className="border-r border-r-gray-400 pb-2 pt-2">
-            <div className="w-full flex flex-row items-center justify-start">
+            <div className="w-full flex flex-col items-start justify-center gap-1">
+              <span className="block pl-3 text-sm text-gray-600">Associated Tokens</span>
               <TagInput
                 initialList={token.associatedTokens}
                 tagList={tagList ?? []}
@@ -107,7 +110,8 @@ export const TagEditForm = ({ token }: TagEditFormProps) => {
             </div>
           </td>
           <td className="border-r border-r-gray-400 pb-2 pt-2 w-56 min-w-32">
-            <div className="flex flex-row items-center pl-2 pr-2">
+            <div className="flex flex-col items-start justify-center gap-1 pl-2 pr-2">
+              <span className="text-sm text-gray-600">Learning Chapter</span>
               <input
                 className="w-full outline-0"
                 type="text"
@@ -125,7 +129,8 @@ export const TagEditForm = ({ token }: TagEditFormProps) => {
             </div>
           </td>
           <td className="border-r border-r-gray-400 pb-2 pt-2 w-56 min-w-32">
-            <div className="flex flex-row items-center pl-2 pr-2">
+            <div className="flex flex-col items-start justify-center gap-1 pl-2 pr-2">
+              <span className="text-sm text-gray-600">Course</span>
               <input
                 className="w-full outline-0"
                 type="text"
