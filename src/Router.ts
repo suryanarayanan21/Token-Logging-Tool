@@ -3,6 +3,7 @@ import { createBrowserRouter } from "react-router";
 import { Login } from "./Login";
 import { NewTokens } from "./NewTokens";
 import { EditTokens } from "./EditTokens";
+import { FileBrowser } from "./FileBrowser";
 
 export default createBrowserRouter([
   {
@@ -20,6 +21,10 @@ export default createBrowserRouter([
       {
         path: "edit/",
         Component: EditTokens,
+      },
+      {
+        path: "files/",
+        Component: FileBrowser
       }
     ],
   },

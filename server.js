@@ -29,6 +29,11 @@ app.get("/api/files", async (req, res) => {
   await fileStream.pipe(res);
 });
 
+app.get("/api/allfiles", async (req, res) => {
+  const blobs = await files.listAllFiles();
+  res.json(blobs);
+})
+
 app.post("/api/files", upload.single("file"), async (req, res) => {
   console.log(`Received uploaded file: ${req.file.originalname}`);
   const stream = Readable.from(req.file.buffer);
