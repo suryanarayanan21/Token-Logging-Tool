@@ -24,6 +24,14 @@ export const Login = () => {
             Submit
           </button>
         </div>
+        <div>
+          <button
+            className="rounded-sm bg-gray-800 text-white pt-2 pb-2 pl-4 pr-4 cursor-pointer"
+            onClick={() => navigate(`/files/`)}
+          >
+            File Browser
+          </button>
+        </div>
       </div>
     </div>
   );
